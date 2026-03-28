@@ -460,16 +460,6 @@ Makie.convert_arguments(::PointBased, ::MyConvVector) = ([Point(10, 20)],)
                     @test apply_conversion(Tooltip, xs[1], ys[1]) isa Tuple{Point2{T_out}}
                 end
 
-                @testset "Tricontourf" begin
-                    @test apply_conversion(Tricontourf, xs, ys, zs) isa Tuple{<:Makie.DelTri.Triangulation{Matrix{T_out}}, Vector{T_out}}
-                end
-
-                @testset "Triplot" begin
-                    @test apply_conversion(Triplot, ps2) isa Tuple{Vector{Point2{T_out}}}
-                    @test apply_conversion(Triplot, xs, ys) isa Tuple{Vector{Point2{T_out}}}
-                    # TODO: DelTri.Triangulation
-                end
-
                 @testset "Voronoiplot" begin
                     @test apply_conversion(Voronoiplot, m) isa Tuple{Vector{Point3{Float64}}}
                     @test apply_conversion(Voronoiplot, xs, ys, zs) isa Tuple{Vector{Point3{T_out}}}

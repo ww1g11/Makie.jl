@@ -170,10 +170,10 @@ import Makie: find_nearby_attributes, attribute_names, textdiff
 
 @testset "attribute suggestions" begin
     @test find_nearby_attributes(Set([:clr]), sort(string.(collect(attribute_names(Lines))))) == ([("color", true)], true)
-    triplot_attrs = sort(string.(collect(attribute_names(Triplot))))
+    lines_attrs = sort(string.(collect(attribute_names(Lines))))
     attrs = [:recompute_centres, :clr, :strokecolour, :blahblahblahblahblah]
-    suggestions = find_nearby_attributes(attrs, triplot_attrs)
-    @test suggestions == ([("recompute_centers", 1), ("marker", 0), ("strokecolor", 1), ("convex_hull_color", 0)], true)
+    suggestions = find_nearby_attributes(attrs, lines_attrs)
+    @test suggestions == ([("linewidth", 1), ("color", 1), ("strokecolor", 1), ("linestyle", 1)], true)
 
     @test textdiff("clr", "color") == "c\e[34m\e[1mo\e[22m\e[39ml\e[34m\e[1mo\e[22m\e[39mr"
     @test textdiff("clor", "color") == "c\e[34m\e[1mo\e[22m\e[39mlor"

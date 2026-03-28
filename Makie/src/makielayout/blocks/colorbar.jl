@@ -56,7 +56,7 @@ function extract_colormap(plot::Plot{volumeslices})
     return extract_colormap(plot.plots[1])
 end
 
-function extract_colormap(plot::Union{Contourf, Tricontourf})
+function extract_colormap(plot::Contourf)
     levels = ComputePipeline.get_observable!(plot.computed_levels)
     limits = lift(l -> (l[1], l[end]), levels)
     function extend_color(color, computed)

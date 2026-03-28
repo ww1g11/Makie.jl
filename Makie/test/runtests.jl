@@ -43,7 +43,6 @@ end
         include("plots/barplot.jl")
         include("plots/hist.jl")
         include("plots/poly.jl")
-        include("plots/voronoiplot.jl")
     end
 
     @testset "Scenes, Blocks & Figures" begin

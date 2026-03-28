@@ -59,8 +59,7 @@ import GridLayoutBase
 import ImageIO
 import FileIO
 import SparseArrays
-import TriplotBase
-import DelaunayTriangulation as DelTri
+
 import REPL
 import MacroTools
 
@@ -175,10 +174,8 @@ include("basic_recipes/stairs.jl")
 include("basic_recipes/stem.jl")
 include("basic_recipes/streamplot.jl")
 include("basic_recipes/timeseries.jl")
-include("basic_recipes/tricontourf.jl")
-include("basic_recipes/triplot.jl")
+
 include("basic_recipes/volumeslices.jl")
-include("basic_recipes/voronoiplot.jl")
 include("basic_recipes/voxels.jl")
 include("basic_recipes/waterfall.jl")
 include("basic_recipes/wireframe.jl")
