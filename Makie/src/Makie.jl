@@ -21,7 +21,6 @@ using Pkg.Artifacts # load early to cut down REPLExt init time
 using LaTeXStrings
 using MathTeXEngine
 using Random
-using FFMPEG_jll # get FFMPEG on any system!
 using Observables
 using GeometryBasics
 using PlotUtils
@@ -51,8 +50,6 @@ import Unitful
 import UnicodeFun
 import RelocatableFolders
 import StatsBase
-import Distributions
-import KernelDensity
 import Isoband
 import PolygonOps
 import GridLayoutBase
@@ -67,7 +64,6 @@ using IntervalSets: IntervalSets, (..), OpenInterval, ClosedInterval, AbstractIn
 using FixedPointNumbers: N0f8
 
 using GeometryBasics: width, widths, height, positive_widths, VecTypes, AbstractPolygon, value, StaticVector
-using Distributions: Distribution, VariateForm, Discrete, QQPair, pdf, quantile, qqbuild
 
 import FileIO: save
 import FreeTypeAbstraction: height_insensitive_boundingbox
@@ -212,12 +208,9 @@ include("specapi.jl")
 # statistical recipes
 include("stats/conversions.jl")
 include("stats/hist.jl")
-include("stats/density.jl")
 include("stats/ecdf.jl")
-include("stats/distributions.jl")
 include("stats/crossbar.jl")
 include("stats/boxplot.jl")
-include("stats/violin.jl")
 include("stats/hexbin.jl")
 include("stats/dendrogram.jl")
 

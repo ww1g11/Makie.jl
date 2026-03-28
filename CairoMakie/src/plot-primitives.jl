@@ -58,7 +58,7 @@ end
     is_cairomakie_atomic_plot(plot::Plot)::Bool
 
 Returns whether the plot is considered atomic for the CairoMakie backend.
-This is overridden for `Poly`, `Band`, and `Tricontourf` so we can apply
+This is overridden for `Poly`, and `Band` so we can apply
 CairoMakie can treat them as atomic plots and render them directly.
 
 Plots with children are by default recursed into.  This can be overridden

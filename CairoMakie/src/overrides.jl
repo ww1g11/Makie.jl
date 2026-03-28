@@ -426,50 +426,6 @@ function is_cairomakie_atomic_plot(plot::Band{<:Tuple{<:AbstractVector{<:Point2}
     return true
 end
 
-#################################################################################
-#                                  Tricontourf                                  #
-# Tricontourf creates many disjoint polygons that are adjacent and form contour #
-#  bands, however, at the gaps we see white antialiasing artifacts. Therefore   #
-#               we override behavior and draw each band in one go               #
-#################################################################################
-
-function draw_plot(scene::Scene, screen::Screen, tric::Tricontourf)
-
-    pol = only(tric.plots)::Poly
-    colornumbers = pol.color[]
-    colors = to_cairo_color(colornumbers, pol)
-    polygons = pol[1][]
-    model = pol.model[]
-    space = pol.space[]
-    projected_polys = project_polygon.(Ref(tric), space, polygons, Ref(tric.clip_planes[]), Ref(model))
-
-    function draw_tripolys(polys, colornumbers, colors)
-        for (i, (pol, colnum, col)) in enumerate(zip(polys, colornumbers, colors))
-            polypath(screen.context, pol)
-            if i == length(colornumbers) || colnum != colornumbers[i + 1]
-                set_source(screen.context, col)
-                Cairo.fill(screen.context)
-            end
-        end
-        return
-    end
-
-    draw_tripolys(projected_polys, colornumbers, colors)
-
-    if colors isa Cairo.CairoPattern
-        pattern_set_matrix(colors, Cairo.CairoMatrix(1, 0, 0, 1, 0, 0))
-    end
-
-    return
-end
-
-# Override `is_cairomakie_atomic_plot` to allow `Tricontourf` to remain a unit,
-# instead of auto-decomposing in lines and mesh.
-function is_cairomakie_atomic_plot(plot::Tricontourf)
-    return true
-end
-
-
 ################################################################################
 #                                   Arrows2D                                   #
 #   The SVG backend does not support CairoMeshPattern, rasterizing the image   #

@@ -105,7 +105,7 @@ between each.
     [`violin`, `hist`, `nothing`] how to show cloud plots, either as violin or histogram
     plots, or not at all.
     """
-    clouds = violin
+    clouds = :violin
     """
     If `clouds=hist`, this passes down the number of bins to the histogram call.
     """
@@ -296,13 +296,9 @@ function plot!(plot::RainClouds)
     )
 
     if !isnothing(clouds)
-        if clouds === violin
-            violin!(
-                plot, final_x_positions .- recenter_to_boxplot_nudge_value .* width_ratio, data_array;
-                show_median = show_median, side = side, width = width_ratio * cloud_width, plot.cycle,
-                datalimits = plot.violin_limits, plot.color, gap = 0, orientation = plot.orientation[]
-            )
-        elseif clouds === hist
+        if clouds === :violin
+            error("Violin plot is no longer supported. Please use `clouds=:hist` instead.")
+        elseif clouds === :hist
             edges = pick_hist_edges(data_array, hist_bins)
             # dodge belongs below: it ensure that the histogram groups labels by both dodge
             # and category (so there is a separate histogram for each dodge group)
@@ -324,7 +320,7 @@ function plot!(plot::RainClouds)
                 )
             end
         else
-            error("cloud attribute accepts (violin, hist, nothing), but not: $(clouds)")
+            error("cloud attribute accepts (:violin, :hist, nothing), but not: $(clouds)")
         end
     end
 

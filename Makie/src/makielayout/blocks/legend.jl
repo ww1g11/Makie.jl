@@ -750,7 +750,7 @@ function legendelements(plot::Scatter, legend)
     ]
 end
 
-function legendelements(plot::Union{Violin, BoxPlot, CrossBar}, legend)
+function legendelements(plot::Union{BoxPlot, CrossBar}, legend)
     color = extract_color(plot, legend[:polycolor])
     return LegendElement[
         PolyElement(
@@ -783,7 +783,7 @@ function legendelements(plot::Band, legend)
     ]
 end
 
-function legendelements(plot::Union{Poly, Density}, legend)
+function legendelements(plot::Poly, legend)
     color = Makie.extract_color(plot, legend[:polycolor])
     return LegendElement[
         Makie.PolyElement(

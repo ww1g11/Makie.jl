@@ -288,9 +288,9 @@ end
 @testset "cycling" begin
     fig = Figure()
     ax = Axis(fig[1, 1], palette = (patchcolor = [:blue, :green],))
-    pl = density!(rand(10); color = Cycled(2))
+    pl = hist!(rand(10); color = Cycled(2))
     @test pl.color[] === :green
-    pl = density!(rand(10); color = Cycled(1))
+    pl = hist!(rand(10); color = Cycled(1))
     @test pl.color[] === :blue
 end
 
@@ -523,10 +523,8 @@ end
         return f
     end
 
-    @test make_fig(density!, rand(100)) isa Figure
     @test make_fig(poly!, Rect2f(0, 0, 1, 1)) isa Figure
     @test make_fig(band!, rand(3), rand(3), rand(3)) isa Figure
-    @test make_fig(violin!, rand(1:3, 10), rand(10)) isa Figure
     @test make_fig(boxplot!, rand(1:3, 10), rand(10)) isa Figure
     @test make_fig(crossbar!, rand(3), rand(3), rand(3) .- 1, rand(3) .+ 1) isa Figure
     @test make_fig(scatter!, rand(3)) isa Figure
@@ -579,7 +577,6 @@ end
         eb = errorbars!(ax, 1:10, 1:10, [0.3 for _ in 1:10], whiskerwidth = 5)
         text!(ax, Point2f(2), text = "abba")
         tooltip!(ax, Point2f(8), "baab")
-        qqplot!(ax, 5:10, 1:5)
         ax.yscale = log10
         ax.yscale = identity
         ax.yscale = log10

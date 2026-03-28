@@ -1,7 +1,5 @@
 using StatsBase: Histogram
 using Makie, StatsBase
-import Distributions
-using KernelDensity
 
 using Random: seed!
 using GeometryBasics: Rect2f
@@ -49,99 +47,7 @@ seed!(0)
     @test plt[4][] == h.weights
 end
 
-@testset "density" begin
-    v = randn(1000)
-    d = kde(v)
-    fig, ax, p1 = plot(d)
-    @test p1 isa Lines
-    fig, ax, p2 = lines(d.x, d.density)
-    @test p1[1][] == p2[1][]
 
-    x = randn(1000)
-    y = randn(1000)
-    d = kde((x, y))
-    fig, ax, p1 = plot(d)
-    @test p1 isa Heatmap
-    fig, ax, p2 = heatmap(d.x, d.y, d.density)
-    @test p1[1][] == p2[1][]
-    @test p1[2][] == p2[2][]
-    @test p1[3][] == p2[3][]
-
-    fig, ax, p1 = surface(d)
-    @test p1 isa Surface
-    fig, ax, p2 = surface(d.x, d.y, d.density)
-    @test p1[1][] == p2[1][]
-    @test p1[2][] == p2[2][]
-    @test p1[3][] == p2[3][]
-end
-
-@testset "distribution" begin
-    d = Distributions.Normal()
-    rg = Makie.support(d)
-    @test minimum(rg) ≈ -3.7190164854556866
-    @test maximum(rg) ≈ 3.719016485455714
-    fix, ax, plt = plot(d)
-    @test plt isa Lines
-    @test !Makie.isdiscrete(d)
-    @test first(plt[1][][1]) ≈ minimum(rg) rtol = 1.0f-6
-    @test first(plt[1][][end]) ≈ maximum(rg) rtol = 1.0f-6
-
-    for (x, pd) in plt[1][]
-        @test pd ≈ Distributions.pdf(d, x) rtol = 1.0f-6
-    end
-
-    d = Distributions.Poisson()
-    rg = Makie.support(d)
-    @test rg == 0:6
-    fig, ax, p = plot(d)
-    @test p isa ScatterLines
-    plt = p.plots[1]
-    @test Makie.isdiscrete(d)
-
-    @test first.(plt[1][]) == 0:6
-    @test last.(plt[1][]) ≈ Distributions.pdf.(d, first.(plt[1][]))
-end
-
-@testset "qqplot" begin
-    v = randn(1000)
-    q = Distributions.qqbuild(fit(Distributions.Normal, v), v)
-    fig, ax, p = qqnorm(v)
-
-    @test length(p.plots) == 2
-    plt = p.plots[1]
-    @test plt isa Scatter
-    @test first.(plt[1][]) ≈ q.qx rtol = 1.0e-6
-    @test last.(plt[1][]) ≈ q.qy rtol = 1.0e-6
-
-    plt = p.plots[2]
-    @test plt isa LineSegments
-    @test first.(plt[1][]) ≈ [extrema(q.qx)...] rtol = 1.0e-6
-    @test last.(plt[1][]) ≈ [extrema(q.qx)...] rtol = 1.0e-6
-
-    fig, ax, p = qqnorm(v, qqline = nothing)
-    @test length(p.plots) == 1
-    plt = p.plots[1]
-    @test plt isa Scatter
-    @test first.(plt[1][]) ≈ q.qx rtol = 1.0e-6
-    @test last.(plt[1][]) ≈ q.qy rtol = 1.0e-6
-
-    fig, ax, p = qqnorm(v, qqline = :fit)
-    plt = p.plots[2]
-    itc, slp = hcat(fill!(similar(q.qx), 1), q.qx) \ q.qy
-    xs = [extrema(q.qx)...]
-    ys = slp .* xs .+ itc
-    @test first.(plt[1][]) ≈ xs rtol = 1.0e-6
-    @test last.(plt[1][]) ≈ ys rtol = 1.0e-6
-
-    fig, ax, p = qqnorm(v, qqline = :quantile)
-    plt = p.plots[2]
-    xs = [extrema(q.qx)...]
-    quantx, quanty = quantile(q.qx, [0.25, 0.75]), quantile(q.qy, [0.25, 0.75])
-    slp = diff(quanty) ./ diff(quantx)
-    ys = quanty .+ slp .* (xs .- quantx)
-    @test first.(plt[1][]) ≈ xs rtol = 1.0e-6
-    @test last.(plt[1][]) ≈ ys rtol = 1.0e-6
-end
 
 @testset "ecdfplot" begin
     v = randn(1000)
@@ -278,30 +184,4 @@ end
     end
 end
 
-@testset "violin" begin
-    x = repeat(1:4, 250)
-    y = x .+ randn.()
-    fig, ax, p = violin(x, y, side = :left, color = :blue)
-    @test p isa Violin
-    @test p.plots[1] isa Poly
-    @test p.plots[1][:color][] === :blue
-    @test p.plots[2] isa LineSegments
-    @test p.plots[2][:color][] === :white
-    @test p.plots[2][:visible][] === :false
 
-    # test categorical
-    x = repeat(["a", "b", "c", "d"], 250)
-    fig2, ax2, p2 = violin(x, y, side = :left, color = :blue)
-    @test p2 isa Violin
-    @test p2.plots[1] isa Poly
-    @test p2.plots[1][:color][] === :blue
-    @test p2.plots[2] isa LineSegments
-    @test p2.plots[2][:color][] === :white
-    @test p2.plots[2][:visible][] === :false
-
-    # median edge case #4675
-    @test violin(fill(1, 1000), push!(fill(0, 999), 1), show_median = true, datalimits = (-0.001, Inf)) !== nothing
-    # And some others
-    @test violin(fill(1, 1000), fill(0, 1000), show_median = true) !== nothing
-    @test violin([1], [1], show_median = true) !== nothing
-end
